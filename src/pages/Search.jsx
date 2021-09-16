@@ -54,7 +54,7 @@ class Search extends Component {
         >
           Pesquisar
         </button>
-        { show ? <AlbumContainer artist={ artist } albuns={ albuns } /> : null }
+        { show && <AlbumContainer artist={ artist } albuns={ albuns } /> }
       </div>
     );
   }
