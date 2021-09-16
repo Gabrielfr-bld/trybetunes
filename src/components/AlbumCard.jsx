@@ -7,12 +7,14 @@ class AlbumCard extends Component {
     const { album: {
       collectionId,
       collectionName,
+      artistName,
     } } = this.props;
 
     return (
       <Link
         data-testid={ `link-to-album-${collectionId}` }
-        to={ `/album/${collectionId}` }
+        to={ { pathname: `/album/${collectionId}`,
+          state: { collectionName, artistName } } }
       >
         {collectionName}
       </Link>
