@@ -16,10 +16,10 @@ class AlbumContainer extends Component {
         <p>
           Resultado de álbuns de:
           {' '}
-          {artist}
+          { artist }
         </p>
         <div>
-          { albuns.length === 0 ? <p>Nenhum álbum foi encontrado</p> : albumCards}
+          {albuns.length === 0 ? <p>Nenhum álbum foi encontrado</p> : albumCards}
         </div>
       </section>
     );
