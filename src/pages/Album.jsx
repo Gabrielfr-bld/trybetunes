@@ -42,23 +42,6 @@ class Album extends Component {
     });
   }
 
-  async getMusics() {
-    const { match: { params: { id } } } = this.props;
-    this.setState({ loading: true }, async () => {
-      const musics = await getMusics(id);
-      this.setState({ musics });
-    });
-  }
-
-  removeStateCheck = (id, checked) => {
-    const { favorites } = this.state;
-    const removeSelect = favorites.indexOf(id);
-    if (!checked) favorites.splice(removeSelect, 1);
-    this.setState({
-      favorites,
-    });
-  }
-
   handleClick = (event) => {
     const { id, checked } = event.target;
     const { musics } = this.state;
@@ -77,6 +60,23 @@ class Album extends Component {
       this.setState(() => ({
         loading: false,
       }));
+    });
+  }
+
+  async getMusics() {
+    const { match: { params: { id } } } = this.props;
+    this.setState({ loading: true }, async () => {
+      const musics = await getMusics(id);
+      this.setState({ musics });
+    });
+  }
+
+  removeStateCheck = (id, checked) => {
+    const { favorites } = this.state;
+    const removeSelect = favorites.indexOf(id);
+    if (!checked) favorites.splice(removeSelect, 1);
+    this.setState({
+      favorites,
     });
   }
 

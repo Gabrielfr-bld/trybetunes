@@ -1,47 +1,38 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Loading from '../pages/Loading';
+import InputFavorites from './InputFavorites';
 
 class MusicCard extends Component {
-  constructor() {
-    super();
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  async handleChange(event) {
-    const { music, onChange } = this.props;
-    onChange(event, music);
-  }
-
   render() {
-    const { music, checked } = this.props;
-    const { trackName, previewUrl, trackId } = music;
-
+    const { musics, handleClick, loading, idTarget, favorites } = this.props;
     return (
-      <section>
-        <h1>{ trackName }</h1>
-        <audio data-testid="audio-component" src={ previewUrl } controls>
-          <track kind="captions" />
-          O seu navegador não suporta o elemento
-          <code>audio</code>
-          .
-        </audio>
-        <label htmlFor={ trackId } data-testid={ `checkbox-music-${trackId}` }>
-          Favorita
-          <input
-            checked={ checked }
-            type="checkbox"
-            id={ trackId }
-            onChange={ this.handleChange }
+      loading ? <Loading /> : musics.map((music) => (
+        <div key={ music.trackId }>
+          <p>{music.trackName}</p>
+          <audio src={ music.previewUrl } controls>
+            <track kind="captions" />
+            O seu navegador não suporta o elemento
+            <code>audio</code>
+          </audio>
+          <InputFavorites
+            trackId={ music.trackId }
+            handleClick={ handleClick }
+            idTarget={ idTarget }
+            favorites={ favorites }
           />
-        </label>
-      </section>
+        </div>
+      ))
     );
   }
 }
 
 MusicCard.propTypes = {
-  trackName: PropTypes.string,
-  previewUrl: PropTypes.string,
-}.isRequired;
+  musics: PropTypes.arrayOf(PropTypes.object).isRequired,
+  handleClick: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  idTarget: PropTypes.string.isRequired,
+  favorites: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 export default MusicCard;
