@@ -77,3 +77,5 @@ FormUser.propTypes = {
   handleClick: PropTypes.func.isRequired,
   enable: PropTypes.bool.isRequired,
 };
+
+export default FormUser;
