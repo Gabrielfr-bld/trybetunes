@@ -32,11 +32,31 @@ class Header extends Component {
     const { loading, user } = this.state;
 
     return (
-      <header data-testid="header-component">
+      <header className="card-header card-center" data-testid="header-component">
         <h1 data-testid="header-user-name">{loading ? <Loading /> : user.name}</h1>
-        <Link data-testid="link-to-search" to="/search"> Pesquisa </Link>
-        <Link data-testid="link-to-favorites" to="/favorites"> Favoritas </Link>
-        <Link data-testid="link-to-profile" to="/profile"> Perfil </Link>
+        <nav className="nav nav-pills nav-justified">
+          <Link
+            className="nav-item nav-link active"
+            data-testid="link-to-search"
+            to="/search"
+          >
+            Pesquisa
+          </Link>
+          <Link
+            className="nav-item nav-link active"
+            data-testid="link-to-favorites"
+            to="/favorites"
+          >
+            Favoritas
+          </Link>
+          <Link
+            className="nav-item nav-link active"
+            data-testid="link-to-profile"
+            to="/profile"
+          >
+            Perfil
+          </Link>
+        </nav>
       </header>
     );
   }

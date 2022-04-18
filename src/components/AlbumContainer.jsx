@@ -6,14 +6,25 @@ class AlbumContainer extends Component {
   render() {
     const { artist, albuns } = this.props;
     const albumCards = albuns.map((album) => (
-      <><><AlbumCard
-        key={album.collectionId}
-        album={album} /><div>
-          <img src={album.artworkUrl100} alt={album.collectionName} />
-        </div></><div>
-          <h5>{album.collectionName}</h5>
-          <p>{album.artist}</p>
-        </div></>
+      <>
+        <>
+          <AlbumCard
+            key={ album.collectionId }
+            album={ album }
+          />
+          <div className="card h-100 d-block" style={ { width: '12rem' } }>
+            <img
+              className="card-img-top"
+              src={ album.artworkUrl100 }
+              alt={ album.collectionName }
+            />
+          </div>
+        </>
+        <div className="card-body">
+          <h5 className="card-title">{album.collectionName}</h5>
+          <p className="card-text">{album.artist}</p>
+        </div>
+      </>
     ));
     return (
       <section>
@@ -22,7 +33,7 @@ class AlbumContainer extends Component {
           {' '}
           { artist }
         </p>
-        <div>
+        <div className="card-group">
           {albuns.length === 0 ? <p>Nenhum álbum foi encontrado</p> : albumCards}
         </div>
       </section>
