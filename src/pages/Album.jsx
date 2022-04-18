@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../components/MusicCard';
-import Header from '../components/Header';
 import Loading from './Loading';
 import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 
@@ -12,33 +11,22 @@ class Album extends Component {
 
     this.state = {
       musics: [],
-      loading: true,
+      loading: false,
       favorites: [],
       idTarget: '',
     };
-    this.getMusics = this.getMusics.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.getFavoriteSongs = this.getFavoriteSongs.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
 
-  componentDidMount() {
-    this.getMusics();
-    this.getFavoriteSongs();
+  async componentDidMount() {
+    this.getLocalStorage();
+    this.fetchMusics();
   }
 
-  handleChange({ target }, music) {
-    const modifySong = target.checked ? addSong : removeSong;
-    this.setState({ loading: true }, async () => {
-      await modifySong(music);
-      this.getFavoriteSongs();
-    });
-  }
-
-  getFavoriteSongs() {
-    this.setState({ loading: true }, async () => {
-      const favorites = await getFavoriteSongs();
-      this.setState({ favorites, loading: false });
+  getLocalStorage = async () => {
+    const response = await getFavoriteSongs();
+    const idFavoritesLocal = response.map(({ trackId }) => String(trackId));
+    this.setState({
+      favorites: idFavoritesLocal,
     });
   }
 
@@ -63,20 +51,21 @@ class Album extends Component {
     });
   }
 
-  async getMusics() {
-    const { match: { params: { id } } } = this.props;
-    this.setState({ loading: true }, async () => {
-      const musics = await getMusics(id);
-      this.setState({ musics });
-    });
-  }
-
   removeStateCheck = (id, checked) => {
     const { favorites } = this.state;
     const removeSelect = favorites.indexOf(id);
     if (!checked) favorites.splice(removeSelect, 1);
     this.setState({
       favorites,
+    });
+  }
+
+  async fetchMusics() {
+    const { match } = this.props;
+    const { id } = match.params;
+    const saveFetch = await getMusics(id);
+    this.setState({
+      musics: saveFetch,
     });
   }
 
@@ -107,7 +96,6 @@ class Album extends Component {
 
     return (
       <section data-testid="page-album">
-        <Header />
         <div className="d-flex justify-content-evenly">
           {this.renderCoverArt()}
           <div className="scroll">
@@ -120,31 +108,13 @@ class Album extends Component {
             />
           </div>
         </div>
-        <h3 data-testid="album-name">
-          { musics[0].collectionName }
-        </h3>
-        <section>
-          {musics.slice(1).map((music, index) => (
-            <MusicCard
-              key={ index }
-              music={ music }
-              checked={ favorites.some((favorite) => favorite.trackId === music.trackId) }
-              onChange={ this.handleChange }
-            />
-          ))}
-        </section>
       </section>
     );
   }
 }
 
 Album.propTypes = {
-  location: PropTypes.shape({
-    state: PropTypes.shape({
-      collectionName: PropTypes.string,
-      artistName: PropTypes.string,
-    }),
-  }),
+  match: PropTypes.objectOf(PropTypes.any),
 }.isRequired;
 
 export default Album;
