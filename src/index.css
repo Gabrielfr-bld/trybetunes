@@ -27,3 +27,28 @@ code {
   display: flex;
   justify-content: center;
 }
+
+.imgPerfil {
+  width: 100px;
+  border-radius: 30%;
+}
+
+.marginLeft {
+  margin-left: 80px;
+}
+
+.marginBotton {
+  margin-bottom: 40px;
+}
+
+.scroll {
+  overflow: auto;
+  height: 400px;
+}
+
+.centerUser {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: 5% auto;
+}
