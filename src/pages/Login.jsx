@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { createUser } from '../services/userAPI';
 import Loading from './Loading';
 
@@ -10,61 +10,71 @@ class Login extends Component {
     this.state = {
       userName: '',
       loading: false,
-      redirect: false,
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
 
-  handleChange({ target }) {
-    this.setState({ [target.name]: target.value });
+  handleChange = ({ target }) => {
+    const { value } = target;
+    this.setState({ userName: value });
   }
 
-  async handleClick() {
+  handleClick = () => {
     const { userName } = this.state;
-    const newUser = { name: userName };
+    const { history } = this.props;
+    const user = { userName };
     this.setState({
       loading: true,
-    });
-
-    await createUser(newUser);
-    this.setState({
-      loading: false,
-      redirect: true,
+    },
+    async () => {
+      await createUser(user);
+      await history.push('search');
     });
   }
 
   render() {
-    const { userName, loading, redirect } = this.state;
+    const { userName, loading } = this.state;
     const minCharacters = 3;
 
     if (loading) return <Loading />;
-    if (redirect) return <Redirect to="/search" />;
 
     return (
-      <div data-testid="page-login">
-        <form method="get">
-          <label htmlFor="userName">
+      <form
+        className="text-center
+        shadow-lg
+        p-3 mb-5 bg-white rounded
+        center"
+      >
+        <p>TrybeTunes</p>
+        <div className="mb-3">
+          <label htmlFor="name" className="form-label">
             <input
+              className="form-control"
               type="text"
-              data-testid="login-name-input"
-              name="userName"
+              id="name"
               value={ userName }
+              placeholder="Digite seu nome"
               onChange={ this.handleChange }
+              name="name"
             />
           </label>
-          <button
-            type="submit"
-            data-testid="login-submit-button"
-            onClick={ this.handleClick }
-            disabled={ userName.length < minCharacters }
-          >
-            Entrar
-          </button>
-        </form>
-      </div>
+          <div className="">
+            <button
+              className="btn btn-lg btn primary btn-block"
+              disabled={ userName.length < minCharacters }
+              type="button"
+              onClick={ this.handleClick }
+            >
+              Entrar
+            </button>
+          </div>
+        </div>
+      </form>
     );
   }
 }
+
+Login.propTypes = {
+  history: PropTypes.objectOf(PropTypes.any),
+}.isRequired;
 
 export default Login;
