@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AlbumContainer from '../components/AlbumContainer';
 import Loading from './Loading';
+import InputSearch from '../components/InputSearch';
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
 
 class Search extends Component {
@@ -8,54 +9,50 @@ class Search extends Component {
     super();
 
     this.state = {
-      searchInput: '',
+      nameArtist: '',
       albuns: [],
-      artist: '',
-      show: false,
       loading: false,
+      waitReturn: false,
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
 
-  handleChange({ target }) {
-    this.setState({ [target.name]: target.value });
-  }
-
-  async handleClick() {
-    const { searchInput } = this.state;
-    const artist = searchInput;
+  handleChange = ({ target }) => {
+    const { value } = target;
     this.setState({
-      loading: true, artist,
+      nameArtist: value,
     });
-    const albuns = await searchAlbumsAPI(artist);
-    this.setState({ albuns, searchInput: '', loading: false, show: true });
+  }
+
+  fetchAlbuns = () => {
+    const { nameArtist } = this.state;
+    this.setState(
+      { loading: true },
+      async () => {
+        const searchApi = await searchAlbumsAPI(nameArtist);
+        await this.setState({
+          loading: false,
+          albuns: searchApi,
+          waitReturn: true,
+        });
+      },
+    );
   }
 
   render() {
-    const { searchInput, loading, artist, show, albuns } = this.state;
-    const minCharacters = 2;
-
-    if (loading) return <Loading />;
+    const { loading, nameArtist, waitReturn, albuns } = this.state;
 
     return (
-      <div data-testid="page-search">
-        <input
-          data-testid="search-artist-input"
-          name="searchInput"
-          value={ searchInput }
-          onChange={ this.handleChange }
-        />
-        <button
-          type="submit"
-          data-testid="search-artist-button"
-          disabled={ searchInput.length < minCharacters }
-          onClick={ this.handleClick }
-        >
-          Pesquisar
-        </button>
-        { show && <AlbumContainer artist={ artist } albuns={ albuns } /> }
-      </div>
+      <section data-testid="page-search">
+        {loading ? <Loading /> : <InputSearch
+          handleChange={ this.handleChange }
+          nameArtist={ nameArtist }
+          fetchAlbuns={ this.fetchAlbuns }
+        />}
+        <div>
+          {waitReturn ? <AlbumContainer albuns={ albuns } nameArtist={ nameArtist } />
+            : null}
+        </div>
+      </section>
     );
   }
 }
